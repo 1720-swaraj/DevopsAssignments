@@ -1,0 +1,25 @@
+1] install java
+-->> ansible wakanda -bm yum -a "name=java state=present"
+
+2] create folder
+-->> ansible wakanda -bm file -a "dest=/mnt/build-tools state=directory" 
+
+3] install tomcat
+-->> ansible wakanda -bm get_url -a "dest=/mnt/build-tools/ url=https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.zip"
+
+4] extract apache
+-->> ansible wakanda -bm unarchive -a "src=/mnt/build-tools/apache-tomcat-9.0.106.zip
+ dest=/mnt/build-tools/ remote_src=yes mode=777"
+
+5] To remove tar file
+-->> ansible wakanda -bm file -a "dest=/mnt/build-tools/apache-tomcat-9.0.106.zip
+ state=absent"
+
+6] Add sample.war in /mnt/build-tools/apache-tomcat-9.0.106/webapps
+-->> ansible wakanda -bm get_url -a "dest=/mnt/build-tools/apache-tomcat-9.0.106/webapps/ url=https://tomcat.apache.org/tomcat-6.0-doc/appdev/sample/sample.war"
+
+7] chmod permission for sample.war file
+-->> ansible wakanda -bm file -a "dest=/mnt/build-tools/apache-tomcat-9.0.106/webapps/sample.war mode=777"
+
+8] Run startup.sh from /mnt/build-tools/apache-tomcat-9.0.106/bin
+-->> ansible wakanda -b -m shell -a "export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto.x86_64 && nohup /mnt/build-tools/apache-tomcat-9.0.106/bin/startup.sh > /tmp/tomcat.log 2>&1 &" 
